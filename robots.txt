@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ready2glowindore-eng.github.io/ready2glow/sitemap.xml
+Sitemap: https://ready2glow.in/sitemap.xml
