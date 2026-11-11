@@ -32,14 +32,27 @@
   /* ---------- State ---------- */
   var selected = loadSelection();
 
+  // Selections are stored with their name and price so they survive moving
+  // between pages that list different services. Cards on the current page
+  // take precedence, so updated prices are picked up automatically.
   function loadSelection() {
     try {
       var raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      return Array.isArray(raw) ? raw.filter(function (id, i) { return catalog[id] && raw.indexOf(id) === i; }) : [];
+      if (!Array.isArray(raw)) return [];
+      var ids = [];
+      raw.forEach(function (item) {
+        var id = typeof item === 'string' ? item : item && item.id;
+        if (!id || ids.indexOf(id) !== -1) return;
+        if (!catalog[id] && item && typeof item === 'object' && item.name) {
+          catalog[id] = { id: id, name: String(item.name), price: parseInt(item.price, 10) || 0, duration: item.duration || '' };
+        }
+        if (catalog[id]) ids.push(id);
+      });
+      return ids;
     } catch (e) { return []; }
   }
   function saveSelection() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(selected)); } catch (e) { /* storage unavailable */ }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedItems())); } catch (e) { /* storage unavailable */ }
   }
   function isSelected(id) { return selected.indexOf(id) !== -1; }
   function addService(id) {
@@ -349,6 +362,7 @@
   var showingAll = false;
 
   function applyFilter(cat) {
+    if (!grid) return;
     $$('.chip[data-filter]').forEach(function (c) {
       var on = c.dataset.filter === cat;
       c.classList.toggle('is-active', on);
@@ -360,9 +374,10 @@
       if (cat !== 'all') el.classList.add('is-shown');
       else el.classList.toggle('is-shown', showingAll);
     });
-    viewAllBtn.parentElement.hidden = cat !== 'all' || !$$('.svc.is-extra', grid).length;
+    if (viewAllBtn) viewAllBtn.parentElement.hidden = cat !== 'all' || !$$('.svc.is-extra', grid).length;
   }
   function toggleViewAll() {
+    if (!grid || !viewAllBtn) return;
     showingAll = !showingAll;
     $$('.svc.is-extra', grid).forEach(function (el) { el.classList.toggle('is-shown', showingAll); });
     viewAllBtn.textContent = showingAll ? 'Show Less' : 'View All';
@@ -432,5 +447,5 @@
   /* ---------- Init ---------- */
   $$('.js-year').forEach(function (el) { el.textContent = new Date().getFullYear(); });
   render();
-  applyFilter('all');
+  if (grid) applyFilter('all');
 })();
