@@ -469,12 +469,12 @@ body.has-selection .toast { bottom: 96px; }
   position: absolute; top: 100%; left: -14px; min-width: 230px; background: #fff; border: 1px solid var(--line);
   border-radius: 10px; box-shadow: var(--shadow); padding: 8px 0; display: none; z-index: 60;
 }
-.main-nav .sub-menu { flex-direction: column; gap: 0; }
-.has-sub:hover > .sub-menu, .has-sub:focus-within > .sub-menu { display: flex; }
+.main-nav .sub-menu { display: none; flex-direction: column; gap: 0; }
+.main-nav .has-sub:hover > .sub-menu, .main-nav .has-sub:focus-within > .sub-menu { display: flex; }
 .sub-menu a { display: block; padding: 8px 16px; text-transform: none; font-size: 13px; letter-spacing: 0; }
 .sub-menu a:hover { background: var(--pink-50); }
 @media (max-width: 860px) {
-  .sub-menu { position: static; display: flex; border: 0; box-shadow: none; padding: 0 0 0 14px; min-width: 0; }
+  .sub-menu { position: static; border: 0; box-shadow: none; padding: 0 0 0 14px; min-width: 0; }
   .main-nav .sub-menu a { padding: 10px 0; font-size: 13px; }
   .main-nav .caret { display: none; }
 }
@@ -540,3 +540,63 @@ body.has-selection .toast { bottom: 96px; }
 .footer-grid { grid-template-columns: 1.5fr 1fr 1.2fr 1fr 1fr; }
 @media (max-width: 960px) { .footer-grid { grid-template-columns: 1fr 1fr; } .footer-about { grid-column: 1 / -1; } }
 @media (max-width: 860px) { .main-nav.is-open { max-height: calc(100dvh - var(--header-h)); overflow-y: auto; } }
+
+/* =========================================================
+   Menu auto-close + phone usability fixes
+   ========================================================= */
+.main-nav .has-sub.is-closed > .sub-menu { display: none !important; }
+@media (max-width: 860px) {
+  .has-sub > a { display: flex !important; justify-content: space-between; align-items: center; }
+  .main-nav .caret { display: inline-block; font-size: 12px; transition: transform .2s; }
+  .has-sub.sub-open > a .caret { transform: rotate(180deg); }
+  .main-nav .has-sub:hover > .sub-menu, .main-nav .has-sub:focus-within > .sub-menu, .main-nav .sub-menu { display: none; }
+  .main-nav .has-sub.sub-open > .sub-menu { display: flex; }
+}
+
+/* Hero arrows and dots: finger-sized tap targets */
+.hero-arrow { min-width: 44px; min-height: 44px; }
+.hero-dots { gap: 0; bottom: 4px; }
+.hero-dots button { width: 28px; height: 28px; background: none; display: grid; place-items: center; }
+.hero-dots button::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.55); transition: width .2s; }
+.hero-dots button[aria-current="true"] { width: 32px; background: none; }
+.hero-dots button[aria-current="true"]::before { width: 18px; border-radius: 4px; background: #fff; }
+
+@media (max-width: 720px) {
+  /* Card buttons and labels */
+  .pill { min-height: 38px; font-size: 12px; }
+  .svc-chip, .svc-added { font-size: 11px; }
+  .svc-remove { font-size: 11px; padding: 5px 10px; }
+  .svc-name { font-size: 13.5px; }
+  .svc-desc { font-size: 12px; }
+  /* Category carousel: wider tiles so labels fit */
+  .cat-track { grid-auto-columns: calc((100% - 12px) / 1.6); }
+  .cat-name { font-size: 13px; white-space: nowrap; }
+  .cat-from { font-size: 13px; white-space: nowrap; }
+  .cat-from b { font-size: 19px; }
+  /* Links with room for fingers */
+  .other-links { gap: 0; }
+  .other-links a { display: inline-block; padding: 9px 0; }
+  .footer-links { gap: 0; }
+  .footer-links a { display: inline-block; padding: 7px 0; }
+  .footer-links li:not(:has(a)) { padding: 7px 0; }
+  .breadcrumb a { display: inline-block; padding: 6px 0; }
+  .faq-item summary { padding-top: 14px; padding-bottom: 14px; }
+}
+
+/* Contact cards with brand icons */
+.contact-ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; color: #fff; margin-bottom: 6px; }
+.contact-ico svg { width: 24px; height: 24px; }
+.contact-ico.wa { background: var(--green); }
+.contact-ico.call { background: var(--pink); }
+.contact-ico.ig { background: linear-gradient(45deg, #f09433, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888); }
+.prose .btn-wa { color: #fff; text-decoration: none; }
+@media (max-width: 400px) {
+  .promo-split { grid-template-columns: 1fr; }
+  .promo-blue { grid-template-columns: 1fr auto; padding-left: 18px; }
+  .promo-art { width: 96px; height: 96px; margin-right: 14px; }
+  .promo-title { font-size: 19px; }
+}
+@media (max-width: 720px) {
+  .contact-card { grid-template-columns: 44px 1fr; column-gap: 14px; align-items: center; }
+  .contact-card .contact-ico { grid-row: span 2; margin: 0; }
+}

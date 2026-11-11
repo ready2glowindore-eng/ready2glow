@@ -249,9 +249,9 @@ INFO_PAGES = [
         "schema_type": "ContactPage",
         "body": """
         <div class="contact-cards">
-          <a class="contact-card" href="https://wa.me/918820369048" target="_blank" rel="noopener"><span class="contact-ico" aria-hidden="true">💬</span><strong>WhatsApp</strong><span>+91 88203 69048</span></a>
-          <a class="contact-card" href="tel:+918820369048"><span class="contact-ico" aria-hidden="true">📞</span><strong>Call</strong><span>+91 88203 69048</span></a>
-          <a class="contact-card" href="https://www.instagram.com/ready2gloww/" target="_blank" rel="noopener"><span class="contact-ico" aria-hidden="true">📸</span><strong>Instagram</strong><span>@ready2gloww</span></a>
+          <a class="contact-card" href="https://wa.me/918820369048" target="_blank" rel="noopener"><span class="contact-ico wa" aria-hidden="true">{wa_svg}</span><strong>WhatsApp</strong><span>+91 88203 69048</span></a>
+          <a class="contact-card" href="tel:+918820369048"><span class="contact-ico call" aria-hidden="true">{call_svg}</span><strong>Call</strong><span>+91 88203 69048</span></a>
+          <a class="contact-card" href="https://www.instagram.com/ready2gloww/" target="_blank" rel="noopener"><span class="contact-ico ig" aria-hidden="true">{ig_svg}</span><strong>Instagram</strong><span>@ready2gloww</span></a>
         </div>
         <h2 class="h-sm">Timings</h2>
         <p>8:00 AM – 8:00 PM, Monday to Sunday.</p>
@@ -259,7 +259,7 @@ INFO_PAGES = [
         <p>We provide home beauty services across Indore, Madhya Pradesh. <a href="../areas-we-serve-indore/">See the areas we serve</a>.</p>
         <h2 class="h-sm">Book an appointment</h2>
         <p>Choose from our {services_links}, then tap <strong>Book Now</strong> to send your booking request on WhatsApp.</p>
-        <p><button type="button" class="btn-wa js-open-booking">Book Now on WhatsApp</button></p>
+        <p><button type="button" class="btn-wa js-open-booking">{wa_svg} Book Now on WhatsApp</button></p>
 """,
     },
     {
@@ -333,6 +333,9 @@ page_header = relink(header)
 # The booking modal's "+ Add more services" link should stay on the current page
 page_tail = relink(tail).replace('href="../#services" class="link-add js-add-more"', 'href="#services" class="link-add js-add-more"')
 page_head_assets = relink(head_assets)
+WA_SVG = re.search(r'<svg class="wa-icon".*?</svg>', index, re.S).group(0)
+IG_SVG = re.search(r'<svg class="ig-icon".*?</svg>', index, re.S).group(0)
+CALL_SVG = ('<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z"/></svg>')
 
 def rupee(n):
     return "₹" + f"{n:,}"
@@ -476,7 +479,7 @@ def render(p):
             <div class="js-summary-list" data-variant="panel"></div>
             <div class="summary-total">Estimated Total: <strong class="js-total">₹0</strong></div>
           </div>
-          <button type="button" class="btn-wa js-open-booking">Book Now on WhatsApp</button>
+          <button type="button" class="btn-wa js-open-booking">{WA_SVG} Book Now on WhatsApp</button>
         </div>
         <ul class="trust">
           <li><div><strong>Verified Beauticians</strong><span>Every Ready2Glow beautician is ID-verified and background-checked.</span></div><span class="trust-ico" aria-hidden="true">🛡️</span></li>
@@ -523,7 +526,8 @@ def render_info(p):
     today_long = date.today().strftime("%-d %B %Y")
     body = (p["body"].replace("{areas_html}", areas_html())
             .replace("{services_links}", services_links_html())
-            .replace("{today_long}", today_long))
+            .replace("{today_long}", today_long)
+            .replace("{wa_svg}", WA_SVG).replace("{ig_svg}", IG_SVG).replace("{call_svg}", CALL_SVG))
     breadcrumb = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE},
         {"@type": "ListItem", "position": 2, "name": p["name"], "item": url}]}

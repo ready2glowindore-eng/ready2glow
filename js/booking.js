@@ -353,7 +353,55 @@
     if (t.closest('.js-view-all')) { toggleViewAll(); return; }
 
     if (t.closest('.js-nav-toggle')) { toggleNav(); return; }
-    if (t.closest('.main-nav a')) toggleNav(false);
+
+    // Phone menu: "Services" opens/closes its sub-list instead of navigating
+    var subToggle = t.closest('.has-sub > a');
+    if (subToggle && isPhoneMenu()) {
+      e.preventDefault();
+      var li = subToggle.parentElement, open = !li.classList.contains('sub-open');
+      li.classList.toggle('sub-open', open);
+      subToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      return;
+    }
+    if (t.closest('.main-nav a')) closeMenus();
+  });
+
+  /* ---------- Menus close automatically after a choice ---------- */
+  function isPhoneMenu() { return window.matchMedia('(max-width: 860px)').matches; }
+  function closeMenus() {
+    toggleNav(false);
+    $$('.has-sub').forEach(function (li) {
+      li.classList.remove('sub-open');
+      if (li.matches(':hover')) li.classList.add('is-closed');   // hide desktop dropdown while still hovered
+      var a = $('a', li); if (a) a.setAttribute('aria-expanded', 'false');
+    });
+    if (document.activeElement && document.activeElement.closest && document.activeElement.closest('.main-nav')) document.activeElement.blur();
+  }
+  $$('.has-sub').forEach(function (li) {
+    li.addEventListener('mouseleave', function () { li.classList.remove('is-closed'); });
+    var a = $('a', li);
+    if (a) { a.setAttribute('aria-haspopup', 'true'); a.setAttribute('aria-expanded', 'false'); }
+  });
+  // A new page can load with the mouse still resting on "Services" (the user just
+  // picked an item). Keep the dropdown shut until the mouse moves off the menu.
+  $$('.has-sub').forEach(function (li) { li.classList.add('is-closed'); });
+  document.addEventListener('mousemove', function (e) {
+    if (!e.target.closest('.has-sub')) $$('.has-sub.is-closed').forEach(function (li) { li.classList.remove('is-closed'); });
+  }, { passive: true });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeMenus();
+    if (e.key === 'Tab') $$('.has-sub.is-closed').forEach(function (li) { li.classList.remove('is-closed'); });
+  });
+  document.addEventListener('click', function (e) {                // tap outside closes the menu
+    if (!e.target.closest('.site-header')) {
+      toggleNav(false);
+      $$('.has-sub').forEach(function (li) { li.classList.remove('sub-open'); });
+    }
+  });
+  window.addEventListener('pageshow', function (e) {               // back/forward cache restore only
+    if (!e.persisted) return;
+    toggleNav(false);
+    $$('.has-sub').forEach(function (li) { li.classList.remove('sub-open'); li.classList.add('is-closed'); });
   });
 
   /* ---------- Services: filter + view all ---------- */
