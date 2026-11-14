@@ -600,3 +600,23 @@ body.has-selection .toast { bottom: 96px; }
   .contact-card { grid-template-columns: 44px 1fr; column-gap: 14px; align-items: center; }
   .contact-card .contact-ico { grid-row: span 2; margin: 0; }
 }
+
+/* ---------- Articles, price list & blog (tools/content) ---------- */
+.h-xs { font-size: 16px; font-weight: 600; color: var(--ink); margin: 18px 0 8px; }
+.article .h-sm { scroll-margin-top: 90px; }
+.article strong { color: var(--ink); }
+.dot-list { display: grid; gap: 8px; margin: 0 0 16px; font-size: 14px; color: var(--ink-2); }
+.dot-list li { position: relative; padding-left: 20px; }
+.dot-list li::before { content: ""; position: absolute; left: 4px; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: var(--pink); }
+.table-wrap { overflow-x: auto; margin: 0 0 16px; -webkit-overflow-scrolling: touch; }
+.table-wrap .price-table { min-width: 0; }
+.page-hero-art-sq img { aspect-ratio: 1 / 1; }
+.cta-box { background: var(--pink-50); border: 1px solid #f6d2e3; border-radius: 16px; padding: 24px; }
+.cta-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.prose .cta-actions .btn-ghost { text-decoration: none; }
+.post-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.post-card { border: 1px solid var(--line); border-radius: 14px; padding: 20px; background: #fff; }
+.post-card .h-xs { margin-top: 0; }
+.post-card a { color: var(--pink); text-decoration: none; }
+.post-card a:hover { text-decoration: underline; }
+.post-card p { color: var(--ink-2); font-size: 13.5px; margin: 0; }

@@ -14,11 +14,13 @@ import html
 import json
 import os
 import re
+import urllib.parse
 from datetime import date
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://ready2glow.in/"
 TODAY = date.today().isoformat()
+PRIVACY_UPDATED = "11 November 2026"  # change only when the policy text changes
 E = html.escape
 
 # --------------------------------------------------------------------------
@@ -30,7 +32,7 @@ PAGES = [
         "slug": "facial-cleanup-at-home-indore",
         "name": "Facial & Cleanup",
         "title": "Facial & Cleanup at Home in Indore | Ready2Glow",
-        "description": "Book a facial or cleanup at home in Indore – fruit facial, gold facial, D-tan and deep-cleansing cleanup by trained beauticians. Book on WhatsApp in a minute.",
+        "description": "Facial and cleanup at home for women in Indore – fruit facial, gold facial, D-Tan and deep-cleansing cleanup at your doorstep. Book on WhatsApp.",
         "h1": "Facial & Cleanup at Home in Indore",
         "intro": "Get fresh, glowing skin without leaving your home. Our beauticians bring a complete facial kit to your doorstep anywhere in Indore – from a quick deep-cleansing cleanup to a luxurious gold facial before a function.",
         "guide_title": "Which facial is right for you?",
@@ -54,7 +56,7 @@ PAGES = [
         "slug": "waxing-at-home-indore",
         "name": "Waxing",
         "title": "Waxing at Home in Indore – Arms, Legs & Body | Ready2Glow",
-        "description": "Hygienic waxing at home in Indore: full arms, full legs, underarms and full body waxing by trained beauticians. Single-use strips and spatulas. Book on WhatsApp.",
+        "description": "Waxing at home for women in Indore: full arms, full legs, underarms and full body waxing. Fresh strips and spatulas every time. Book on WhatsApp.",
         "h1": "Waxing at Home in Indore",
         "intro": "Smooth, long-lasting results in the privacy of your home. Ready2Glow beauticians carry everything needed for clean, comfortable waxing – so you can skip the parlour queue and book a slot that suits you.",
         "guide_title": "Waxing services we offer",
@@ -78,7 +80,7 @@ PAGES = [
         "slug": "threading-at-home-indore",
         "name": "Threading",
         "title": "Eyebrow & Face Threading at Home in Indore | Ready2Glow",
-        "description": "Eyebrow threading, upper lip and full face threading at home in Indore by experienced beauticians. Neat, precise shaping at your doorstep. Book on WhatsApp.",
+        "description": "Eyebrow, upper lip and full face threading at home for women in Indore – neat, precise shaping at your doorstep. Book on WhatsApp.",
         "h1": "Eyebrow & Face Threading at Home in Indore",
         "intro": "Perfectly shaped brows and smooth facial skin without a trip to the parlour. Our beauticians shape your eyebrows to suit your face and remove facial hair quickly and neatly using clean cotton thread.",
         "guide_title": "Threading services",
@@ -100,7 +102,7 @@ PAGES = [
         "slug": "manicure-pedicure-at-home-indore",
         "name": "Manicure & Pedicure",
         "title": "Manicure & Pedicure at Home in Indore | Ready2Glow",
-        "description": "Relaxing manicure, pedicure and spa pedicure at home in Indore. Nail shaping, cuticle care, scrub, massage and polish by trained beauticians. Book on WhatsApp.",
+        "description": "Manicure, pedicure and spa pedicure at home for women in Indore – nail shaping, cuticle care, scrub, massage and polish. Book on WhatsApp.",
         "h1": "Manicure & Pedicure at Home in Indore",
         "intro": "Pamper your hands and feet at home. Our manicure and pedicure services include soaking, scrubbing, cuticle care, a relaxing massage and nail polish – all done with sanitised tools at your doorstep in Indore.",
         "guide_title": "Choose your hand & foot care",
@@ -122,7 +124,7 @@ PAGES = [
         "slug": "hair-spa-at-home-indore",
         "name": "Hair Care",
         "title": "Hair Spa & Hair Care at Home in Indore | Ready2Glow",
-        "description": "Book a hair spa, relaxing head massage or hair cut at home in Indore. Nourishing hair treatments by trained professionals at your doorstep. Book on WhatsApp.",
+        "description": "Hair spa, relaxing head massage and hair cut at home for women in Indore – nourishing hair care at your doorstep. Book on WhatsApp.",
         "h1": "Hair Spa & Hair Care at Home in Indore",
         "intro": "Soft, shiny, healthy hair without stepping out. Ready2Glow brings deep-conditioning hair spas, stress-relieving head massages and stylish hair cuts to your home anywhere in Indore.",
         "guide_title": "Hair services",
@@ -144,7 +146,7 @@ PAGES = [
         "slug": "makeup-artist-at-home-indore",
         "name": "Makeup & Styling",
         "title": "Makeup Artist at Home in Indore | Ready2Glow",
-        "description": "Book a makeup artist at home in Indore for party makeup and saree draping. Flawless looks for weddings, functions and festivals at your doorstep. Book on WhatsApp.",
+        "description": "Book a makeup artist at home in Indore for party makeup and saree draping – for weddings, functions and festivals. Book on WhatsApp.",
         "h1": "Makeup Artist at Home in Indore",
         "intro": "Look your best for weddings, parties, festivals and functions – without rushing to a salon. Our makeup artists come to your home with professional products and finish with neat saree draping if you need it.",
         "guide_title": "Makeup & styling services",
@@ -175,7 +177,7 @@ INFO_PAGES = [
         "slug": "beauty-packages-indore",
         "name": "Packages & Offers",
         "title": "Beauty Packages at Home in Indore | Ready2Glow",
-        "description": "Save with Ready2Glow beauty packages at home in Indore – Glow Essentials, Party Ready, Monthly Pamper and Pre-Bridal Glow. Combine services and book on WhatsApp.",
+        "description": "Ready2Glow beauty packages at home in Indore – Glow Essentials, Party Ready, Monthly Pamper and Pre-Bridal Glow. Combine services, book on WhatsApp.",
         "h1": "Beauty Packages & Offers at Home in Indore",
         "intro": "Combine your favourite services into one home appointment and save. Every package is done by a trained Ready2Glow beautician at your doorstep in Indore.",
         "schema_type": "WebPage",
@@ -216,9 +218,9 @@ INFO_PAGES = [
         "slug": "about-us",
         "name": "About Us",
         "title": "About Ready2Glow – Home Beauty Service in Indore",
-        "description": "Ready2Glow is a home beauty service in Indore offering salon-quality facials, waxing, threading, mani-pedi, hair care and makeup at your doorstep.",
+        "description": "Ready2Glow is a home salon for women in Indore offering facials, waxing, threading, mani-pedi, hair care and makeup at your doorstep.",
         "h1": "About Ready2Glow",
-        "intro": "Ready2Glow brings salon-quality beauty services to homes across Indore – so you can look and feel your best without travelling or waiting at a parlour.",
+        "intro": "Ready2Glow is a home salon for women in Indore. We bring beauty parlour services to your doorstep – so you can look and feel your best without travelling or waiting at a parlour.",
         "schema_type": "AboutPage",
         "body": """
         <h2 class="h-sm">What we do</h2>
@@ -290,6 +292,18 @@ INFO_PAGES = [
 
 ALL_SLUGS = [p["slug"] for p in PAGES] + [p["slug"] for p in INFO_PAGES]
 
+# Related guides shown on each service page (slug → must exist in tools/content/)
+_HOW_OFTEN = ("How often to get a facial, waxing and threading", "blog/how-often-facial-waxing-threading")
+_VS = ("Home salon vs beauty parlour", "blog/home-salon-vs-beauty-parlour")
+GUIDES = {
+    "facials": [("Cleanup vs facial – which one do you need?", "blog/cleanup-vs-facial"), _HOW_OFTEN],
+    "waxing": [("Waxing: how to prepare and aftercare", "blog/waxing-before-and-after-care"), _HOW_OFTEN],
+    "threading": [_HOW_OFTEN, ("Is home salon service safe?", "blog/is-home-salon-service-safe")],
+    "mani-pedi": [_HOW_OFTEN, _VS],
+    "hair": [_HOW_OFTEN, _VS],
+    "makeup": [("Saree draping at home", "saree-draping-at-home-indore"), ("Pre-wedding beauty timeline", "blog/pre-wedding-beauty-timeline")],
+}
+
 # --------------------------------------------------------------------------
 # Extract shared parts from index.html
 # --------------------------------------------------------------------------
@@ -320,14 +334,26 @@ for cat, items in cards.items():
         "desc": html.unescape(re.search(r'<p class="svc-desc">(.*?)</p>', c).group(1)),
     } for c in items]
 
-def relink(block):
-    """Make shared HTML work from a page one folder deep."""
-    block = re.sub(r'(src|href)="(images/|css/|js/|favicon|apple-touch)', r'\1="../\2', block)
-    block = block.replace('href="#top"', 'href="../"').replace('href="./"', 'href="../"').replace('href="./#', 'href="../#')
-    block = re.sub(r'href="#(services|deals|popular|faq|contact|book|about)"', r'href="../#\1"', block)
-    for slug in ALL_SLUGS:  # menu + footer page links
-        block = block.replace(f'href="{slug}/"', f'href="../{slug}/"')
-    return block
+HOME_ANCHORS = ("services", "deals", "popular", "faq", "contact", "book", "about")
+
+def relink(block, up="../"):
+    """Make shared HTML (written for the site root) work from a page `up` levels deep."""
+    def fix(m):
+        attr, val = m.group(1), m.group(2)
+        if re.match(r"(https?:|mailto:|tel:|data:|/|\.\./)", val):
+            return m.group(0)
+        if val == "#top":
+            val = up
+        elif val.startswith("#"):
+            if val[1:] not in HOME_ANCHORS:
+                return m.group(0)
+            val = up + val
+        elif val.startswith("./"):
+            val = up + val[2:]
+        else:
+            val = up + val
+        return f'{attr}="{val}"'
+    return re.sub(r'\b(href|src)="([^"]*)"', fix, block)
 
 page_header = relink(header)
 # The booking modal's "+ Add more services" link should stay on the current page
@@ -375,6 +401,10 @@ def render(p):
         </details>''' for q, a in p["faqs"])
     other_links = "\n".join(f'          <li><a href="../{o["slug"]}/">{E(o["h1"].replace(" in Indore", ""))}</a></li>' for o in others)
     card_html = "\n".join(relink(c) for c in cards[cat])
+    guides = [("Full home salon price list", "home-salon-price-list-indore")] + GUIDES.get(cat, [])
+    guide_links = ('          <h2 class="h-sm">Helpful Guides</h2>\n          <ul class="other-links">\n'
+                   + "\n".join(f'          <li><a href="../{s}/">{E(t)}</a></li>' for t, s in guides)
+                   + "\n          </ul>\n")
 
     return f'''<!doctype html>
 <html lang="en-IN">
@@ -500,7 +530,7 @@ def render(p):
           <ul class="other-links">
 {other_links}
           </ul>
-          <p class="areas">Ready2Glow serves homes across Indore. <a href="../#faq">See all areas we serve</a>.</p>
+{guide_links}          <p class="areas">Ready2Glow serves homes across Indore. <a href="../areas-we-serve-indore/">See all areas we serve</a>.</p>
         </div>
       </div>
     </section>
@@ -523,7 +553,7 @@ def areas_html():
 
 def render_info(p):
     url = SITE + p["slug"] + "/"
-    today_long = date.today().strftime("%-d %B %Y")
+    today_long = PRIVACY_UPDATED
     body = (p["body"].replace("{areas_html}", areas_html())
             .replace("{services_links}", services_links_html())
             .replace("{today_long}", today_long)
@@ -628,28 +658,369 @@ def build_404():
 </html>
 '''
 
-def build_sitemap():
-    urls = ([(SITE, "1.0")] + [(SITE + p["slug"] + "/", "0.8") for p in PAGES]
-            + [(SITE + p["slug"] + "/", "0.6") for p in INFO_PAGES if p["slug"] != "privacy-policy"])
+# --------------------------------------------------------------------------
+# Content pages (blog articles + extra landing pages) from tools/content/*.md
+# --------------------------------------------------------------------------
+CONTENT_DIR = os.path.join(ROOT, "tools", "content")
+WA_BASE = "https://wa.me/918820369048?text="
+cards_by_id = {}
+for m in re.finditer(r'        <article class="svc[^"]*" data-id="([^"]+)"[^>]*>.*?</article>', grid + deals, re.S):
+    cards_by_id.setdefault(m.group(1), m.group(0).replace("svc is-extra", "svc"))
+
+def load_content():
+    pages = []
+    names = sorted(os.listdir(CONTENT_DIR)) if os.path.isdir(CONTENT_DIR) else []
+    for fn in names:
+        if not fn.endswith(".md"):
+            continue
+        raw = open(os.path.join(CONTENT_DIR, fn), encoding="utf-8").read()
+        m = re.match(r"---\n(.*?)\n---\n(.*)", raw, re.S)
+        if not m:
+            raise SystemExit(f"{fn}: missing front matter")
+        meta = {}
+        for line in m.group(1).splitlines():
+            if ": " in line:
+                k, v = line.split(": ", 1)
+                meta[k.strip()] = v.strip()
+        for k in ("slug", "type", "title", "description", "h1", "crumb", "intro", "image", "image_alt", "wa_text", "published"):
+            if not meta.get(k):
+                raise SystemExit(f"{fn}: missing '{k}'")
+        if "[CONFIRM" in raw:
+            raise SystemExit(f"{fn}: still contains a [CONFIRM] placeholder – resolve it before publishing")
+        meta["body"] = m.group(2).strip()
+        meta["cards"] = [c.strip() for c in meta.get("cards", "").split(",") if c.strip()]
+        for c in meta["cards"]:
+            if c not in cards_by_id:
+                raise SystemExit(f"{fn}: unknown card id '{c}'")
+        pages.append(meta)
+    # articles in a stable, sensible order: oldest first, then by name
+    return sorted(pages, key=lambda p: (p["type"] != "landing", p["published"], p["slug"]))
+
+def md_inline(t):
+    t = E(t, quote=False)
+    t = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", lambda m: f'<a href="{m.group(2)}">{m.group(1)}</a>', t)
+    t = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
+    t = re.sub(r"(?<![\w*])\*(?!\s)(.+?)(?<!\s)\*(?![\w*])", r"<em>\1</em>", t)
+    return t
+
+def anchor_id(text):
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+def md_to_html(md, indent="        "):
+    """Tiny Markdown subset: ## / ### headings, paragraphs, - and 1. lists, pipe tables, **b**, *i*, [a](url)."""
+    out, para, lines, i = [], [], md.splitlines(), 0
+
+    def flush():
+        if para:
+            out.append(f"{indent}<p>{md_inline(' '.join(para))}</p>")
+            para.clear()
+
+    def cell(tag, c, num=False):
+        cls = ' class="num"' if num else ""
+        scope = ' scope="col"' if tag == "th" else ""
+        return f"<{tag}{scope}{cls}>{md_inline(c)}</{tag}>"
+
+    while i < len(lines):
+        ln = lines[i].rstrip()
+        if not ln.strip():
+            flush(); i += 1; continue
+        if ln.startswith("## "):
+            flush(); t = ln[3:].strip()
+            out.append(f'{indent}<h2 class="h-sm" id="{anchor_id(t)}">{md_inline(t)}</h2>'); i += 1; continue
+        if ln.startswith("### "):
+            flush(); out.append(f'{indent}<h3 class="h-xs">{md_inline(ln[4:].strip())}</h3>'); i += 1; continue
+        if re.match(r"([-*]|\d+\.) ", ln):
+            flush(); ordered = bool(re.match(r"\d+\. ", ln)); items = []
+            while i < len(lines) and re.match(r"([-*]|\d+\.) ", lines[i]):
+                items.append(re.sub(r"^([-*]|\d+\.) ", "", lines[i].strip())); i += 1
+            tag, cls = ("ol", "step-list") if ordered else ("ul", "dot-list")
+            out.append(f'{indent}<{tag} class="{cls}">' + "".join(f"<li>{md_inline(x)}</li>" for x in items) + f"</{tag}>")
+            continue
+        if ln.lstrip().startswith("|"):
+            flush(); rows = []
+            while i < len(lines) and lines[i].lstrip().startswith("|"):
+                rows.append([c.strip() for c in lines[i].strip().strip("|").split("|")]); i += 1
+            head = rows[0]
+            body = [r for r in rows[1:] if not all(re.fullmatch(r":?-+:?", c) for c in r)]
+            num_cols = {j for j in range(len(head)) if body and all(j < len(r) and re.match(r"(₹|–$)", r[j]) for r in body) and any(r[j].startswith("₹") for r in body if j < len(r))}
+            out.append(f'{indent}<div class="table-wrap"><table class="price-table"><thead><tr>'
+                       + "".join(cell("th", c, j in num_cols) for j, c in enumerate(head)) + "</tr></thead><tbody>"
+                       + "".join("<tr>" + "".join(cell("td", c, j in num_cols) for j, c in enumerate(r)) + "</tr>" for r in body)
+                       + "</tbody></table></div>")
+            continue
+        para.append(ln.strip()); i += 1
+    flush()
+    return "\n".join(out)
+
+def split_faq(md):
+    parts = re.split(r"^## Frequently asked questions\s*$", md, flags=re.M)
+    if len(parts) == 1:
+        return md, []
+    faqs = []
+    for chunk in re.split(r"^### ", parts[1], flags=re.M)[1:]:
+        q, _, a = chunk.partition("\n")
+        faqs.append((q.strip(), a.strip()))
+    return parts[0].strip(), faqs
+
+def plain(md):
+    md = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", md).replace("**", "").replace("*", "")
+    return re.sub(r"\s+", " ", md).strip()
+
+def card_price(c):
+    return int(re.search(r'data-price="(\d+)"', cards_by_id[c]).group(1))
+
+def head_html(title, desc, url, image, up, og_type="website"):
+    return f'''<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{E(title)}</title>
+  <meta name="description" content="{E(desc)}">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="{url}">
+  <meta name="theme-color" content="#e6007e">
+  <meta property="og:type" content="{og_type}">
+  <meta property="og:site_name" content="Ready2Glow">
+  <meta property="og:title" content="{E(title)}">
+  <meta property="og:description" content="{E(desc)}">
+  <meta property="og:url" content="{url}">
+  <meta property="og:image" content="{SITE}{image}">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:card" content="summary_large_image">
+{relink(head_assets, up)}
+'''
+
+def render_content(p, all_content):
+    depth = p["slug"].count("/") + 1
+    up, url, is_article = "../" * depth, SITE + p["slug"] + "/", p["type"] == "article"
+    body_md, faqs = split_faq(p["body"])
+    crumbs = [("Home", SITE, up)] + ([("Blog", SITE + "blog/", up + "blog/")] if is_article else []) + [(p["crumb"], url, "")]
+
+    breadcrumb = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": n + 1, "name": nm, "item": it} for n, (nm, it, _) in enumerate(crumbs)]}
+    business = {"@type": "BeautySalon", "@id": SITE + "#business", "name": "Ready2Glow", "url": SITE}
+    if is_article:
+        main_ld = {"@context": "https://schema.org", "@type": "Article", "headline": p["h1"], "description": p["description"],
+                   "image": SITE + p["image"], "datePublished": p["published"], "dateModified": p.get("updated", p["published"]),
+                   "author": {"@type": "Organization", "name": "Ready2Glow", "url": SITE},
+                   "publisher": {"@type": "Organization", "name": "Ready2Glow",
+                                 "logo": {"@type": "ImageObject", "url": SITE + "images/logo.png"}},
+                   "mainEntityOfPage": url, "inLanguage": "en-IN"}
+    elif p["cards"]:
+        main_ld = {"@context": "https://schema.org", "@type": "Service", "name": p["h1"], "description": p["description"], "url": url,
+                   "provider": dict(business, telephone="+91-8820369048"), "areaServed": {"@type": "City", "name": "Indore"},
+                   "audience": {"@type": "PeopleAudience", "suggestedGender": "female"},
+                   "offers": [{"@type": "Offer", "price": str(card_price(c)), "priceCurrency": "INR",
+                               "itemOffered": {"@type": "Service",
+                                               "name": html.unescape(re.search(r'data-name="([^"]+)"', cards_by_id[c]).group(1))}}
+                              for c in p["cards"]]}
+    else:
+        main_ld = {"@context": "https://schema.org", "@type": "WebPage", "name": p["h1"], "url": url,
+                   "description": p["description"], "about": business}
+    lds = [breadcrumb, main_ld]
+    if faqs:
+        lds.append({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in faqs]})
+    ld_html = "\n".join(f'  <script type="application/ld+json">\n{ld(o)}\n  </script>' for o in lds)
+
+    crumb_html = " ".join(f'<a href="{href}">{E(nm)}</a> <span aria-hidden="true">›</span>' for nm, _, href in crumbs[:-1])
+    crumb_html += f' <span aria-current="page">{E(p["crumb"])}</span>'
+    from_html = hero_cta = cards_block = faq_html = ""
+    if p["cards"]:
+        from_html = f'\n          <p class="page-hero-from">Starting at <b>{rupee(min(card_price(c) for c in p["cards"]))}</b></p>'
+        hero_cta = '\n          <div class="page-hero-cta"><a class="btn-yellow" href="#services">Choose Services</a></div>'
+        card_html = "\n".join(relink(cards_by_id[c], up) for c in p["cards"])
+        cards_block = f'''
+    <section class="section" id="services" aria-labelledby="svc-title">
+      <div class="container">
+        <header class="sec-head">
+          <p class="sec-eyebrow">Book at Home</p>
+          <h2 id="svc-title">Add to Your Booking</h2>
+        </header>
+        <div class="grid grid-page">
+{card_html}
+        </div>
+        <div class="center"><button type="button" class="btn-wa js-open-booking">{WA_SVG} Book Now on WhatsApp</button></div>
+      </div>
+    </section>
+'''
+    if faqs:
+        items = "\n".join(f'''        <details class="faq-item">
+          <summary>{md_inline(q)}</summary>
+{md_to_html(a, "          ")}
+        </details>''' for q, a in faqs)
+        faq_html = f'''
+    <section class="section band-soft" id="faq" aria-labelledby="faq-title">
+      <div class="container prose">
+        <h2 id="faq-title" class="h-sm">Frequently Asked Questions</h2>
+{items}
+      </div>
+    </section>
+'''
+    guides = [o for o in all_content if o["type"] == "article" and o is not p][:5]
+    guide_items = "\n".join(f'          <li><a href="/{o["slug"]}/">{E(o["h1"])}</a></li>' for o in guides)
+    svc_items = "\n".join(f'          <li><a href="/{s["slug"]}/">{E(s["h1"].replace(" in Indore", ""))}</a></li>' for s in PAGES)
+    wa = WA_BASE + urllib.parse.quote(p["wa_text"])
+    page_tail = relink(tail, up).replace(f'href="{up}#services" class="link-add js-add-more"', 'href="#services" class="link-add js-add-more"')
+
+    return head_html(p["title"], p["description"], url, p["image"], up, "article" if is_article else "website") + f'''
+{ld_html}
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+{relink(header, up)}
+
+  <main id="main">
+    <section class="page-hero" aria-labelledby="page-title">
+      <div class="container page-hero-inner">
+        <div class="page-hero-copy">
+          <nav class="breadcrumb" aria-label="Breadcrumb">{crumb_html}</nav>
+          <h1 id="page-title">{E(p["h1"])}</h1>
+          <p class="page-hero-sub">{E(p["intro"])}</p>{from_html}{hero_cta}
+        </div>
+        <div class="page-hero-art page-hero-art-sq"><img src="{up}{p["image"]}" alt="{E(p["image_alt"])}" width="300" height="300" fetchpriority="high"></div>
+      </div>
+    </section>
+{cards_block}
+    <section class="section">
+      <div class="container prose article">
+{md_to_html(body_md)}
+      </div>
+    </section>
+
+    <section class="section section-tight" aria-labelledby="cta-title">
+      <div class="container prose cta-box">
+        <h2 id="cta-title" class="h-sm">Book a Home Salon Appointment in Indore</h2>
+        <p>Ready2Glow is a home salon for women in Indore. Message us on WhatsApp and our team will confirm your beautician and time.</p>
+        <p class="cta-actions"><a class="btn-wa" href="{E(wa)}" target="_blank" rel="noopener">{WA_SVG} Book on WhatsApp</a> <a class="btn-ghost" href="tel:+918820369048">Call +91 88203 69048</a></p>
+        <p class="fine-print left">Open 8:00 AM – 8:00 PM, all seven days · Instagram <a href="https://www.instagram.com/ready2gloww/" target="_blank" rel="noopener">@ready2gloww</a></p>
+      </div>
+    </section>
+{faq_html}
+    <section class="section">
+      <div class="container two-col">
+        <div>
+          <h2 class="h-sm">{"More Beauty Guides" if is_article else "Beauty Guides"}</h2>
+          <ul class="other-links">
+{guide_items}
+          </ul>
+        </div>
+        <div>
+          <h2 class="h-sm">Services at Home</h2>
+          <ul class="other-links">
+{svc_items}
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+{page_tail}</body>
+</html>
+'''
+
+def render_blog_index(articles):
+    up, url = "../", SITE + "blog/"
+    title = "Beauty Guides & Tips | Ready2Glow Blog"
+    desc = "Practical guides on facials, waxing, threading, pre-wedding prep and booking a home salon for women in Indore."
+    items = "\n".join(f'''        <article class="post-card">
+          <h2 class="h-xs"><a href="{a["slug"][len("blog/"):]}/">{E(a["h1"])}</a></h2>
+          <p>{E(a["description"])}</p>
+        </article>''' for a in articles)
+    page_ld = {"@context": "https://schema.org", "@type": "Blog", "name": "Ready2Glow Beauty Guides", "url": url, "description": desc,
+               "blogPost": [{"@type": "BlogPosting", "headline": a["h1"], "url": SITE + a["slug"] + "/",
+                             "datePublished": a["published"]} for a in articles]}
+    breadcrumb = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE},
+        {"@type": "ListItem", "position": 2, "name": "Blog", "item": url}]}
+    return head_html(title, desc, url, "images/og-image.jpg", up) + f'''
+  <script type="application/ld+json">
+{ld(breadcrumb)}
+  </script>
+  <script type="application/ld+json">
+{ld(page_ld)}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+{relink(header, up)}
+
+  <main id="main">
+    <section class="page-hero page-hero-slim" aria-labelledby="page-title">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">Blog</span></nav>
+        <h1 id="page-title">Beauty Guides &amp; Tips</h1>
+        <p class="page-hero-sub">Simple, practical guides to help you choose and prepare for home salon services in Indore.</p>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container post-list">
+{items}
+      </div>
+    </section>
+  </main>
+
+{relink(tail, up)}</body>
+</html>
+'''
+
+# --------------------------------------------------------------------------
+# Sitemap: a page's lastmod only moves when its HTML actually changes
+# --------------------------------------------------------------------------
+def read_lastmods():
+    try:
+        sm = open(os.path.join(ROOT, "sitemap.xml"), encoding="utf-8").read()
+    except FileNotFoundError:
+        return {}
+    return dict(re.findall(r"<loc>(.*?)</loc>\s*<lastmod>(.*?)</lastmod>", sm))
+
+def write_page(rel_path, content, changed):
+    path = os.path.join(ROOT, rel_path)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    old = open(path, encoding="utf-8").read() if os.path.exists(path) else None
+    if old != content:
+        open(path, "w", encoding="utf-8").write(content)
+        changed.add(rel_path)
+
+def build_sitemap(entries, lastmods, changed):
     body = "\n".join(f'''  <url>
     <loc>{u}</loc>
-    <lastmod>{TODAY}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>{pr}</priority>
-  </url>''' for u, pr in urls)
+    <lastmod>{TODAY if (path in changed or u not in lastmods) else lastmods[u]}</lastmod>
+  </url>''' for u, path in entries)
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}\n</urlset>\n'
 
 if __name__ == "__main__":
+    lastmods, changed = read_lastmods(), set()
+    sm_path = os.path.join(ROOT, "sitemap.xml")
+    # index.html is edited by hand: count it as changed when it is newer than the last sitemap
+    if not os.path.exists(sm_path) or os.path.getmtime(os.path.join(ROOT, "index.html")) > os.path.getmtime(sm_path):
+        changed.add("index.html")
+    entries = [(SITE, "index.html")]
     for p in PAGES:
-        d = os.path.join(ROOT, p["slug"])
-        os.makedirs(d, exist_ok=True)
-        open(os.path.join(d, "index.html"), "w", encoding="utf-8").write(render(p))
+        rel = p["slug"] + "/index.html"
+        write_page(rel, render(p), changed)
+        entries.append((SITE + p["slug"] + "/", rel))
         print("built", p["slug"] + "/", f'({len(card_data[p["cat"]])} services)')
     for p in INFO_PAGES:
-        d = os.path.join(ROOT, p["slug"])
-        os.makedirs(d, exist_ok=True)
-        open(os.path.join(d, "index.html"), "w", encoding="utf-8").write(render_info(p))
+        rel = p["slug"] + "/index.html"
+        write_page(rel, render_info(p), changed)
+        if p["slug"] != "privacy-policy":
+            entries.append((SITE + p["slug"] + "/", rel))
         print("built", p["slug"] + "/")
-    open(os.path.join(ROOT, "404.html"), "w", encoding="utf-8").write(build_404())
-    open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8").write(build_sitemap())
-    print("built 404.html, sitemap.xml")
+    content = load_content()
+    for p in content:
+        rel = p["slug"] + "/index.html"
+        write_page(rel, render_content(p, content), changed)
+        entries.append((SITE + p["slug"] + "/", rel))
+        print("built", p["slug"] + "/")
+    articles = [p for p in content if p["type"] == "article"]
+    if articles:
+        write_page("blog/index.html", render_blog_index(articles), changed)
+        entries.append((SITE + "blog/", "blog/index.html"))
+        print("built blog/")
+    write_page("404.html", build_404(), changed)
+    open(sm_path, "w", encoding="utf-8").write(build_sitemap(entries, lastmods, changed))
+    print(f"built 404.html, sitemap.xml ({len(entries)} URLs, {len(changed)} files changed)")
