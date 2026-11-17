@@ -296,12 +296,17 @@ ALL_SLUGS = [p["slug"] for p in PAGES] + [p["slug"] for p in INFO_PAGES]
 _HOW_OFTEN = ("How often to get a facial, waxing and threading", "blog/how-often-facial-waxing-threading")
 _VS = ("Home salon vs beauty parlour", "blog/home-salon-vs-beauty-parlour")
 GUIDES = {
-    "facials": [("Cleanup vs facial – which one do you need?", "blog/cleanup-vs-facial"), _HOW_OFTEN],
-    "waxing": [("Waxing: how to prepare and aftercare", "blog/waxing-before-and-after-care"), _HOW_OFTEN],
-    "threading": [_HOW_OFTEN, ("Is home salon service safe?", "blog/is-home-salon-service-safe")],
-    "mani-pedi": [_HOW_OFTEN, _VS],
-    "hair": [_HOW_OFTEN, _VS],
-    "makeup": [("Saree draping at home", "saree-draping-at-home-indore"), ("Pre-wedding beauty timeline", "blog/pre-wedding-beauty-timeline")],
+    "facials": [("Cleanup vs facial – which one do you need?", "blog/cleanup-vs-facial"),
+                ("Gold facial vs fruit facial", "blog/gold-facial-vs-fruit-facial"), _HOW_OFTEN],
+    "waxing": [("Waxing: how to prepare and aftercare", "blog/waxing-before-and-after-care"),
+               ("Threading vs waxing for the face", "blog/threading-vs-waxing-face"), _HOW_OFTEN],
+    "threading": [("Threading vs waxing for upper lip, eyebrows and face", "blog/threading-vs-waxing-face"), _HOW_OFTEN,
+                  ("Is home salon service safe?", "blog/is-home-salon-service-safe")],
+    "mani-pedi": [("Manicure vs pedicure vs spa pedicure", "blog/manicure-vs-pedicure-vs-spa-pedicure"), _HOW_OFTEN, _VS],
+    "hair": [("Is hair spa good for your hair?", "blog/hair-spa-benefits"), _HOW_OFTEN, _VS],
+    "makeup": [("Saree draping at home", "saree-draping-at-home-indore"),
+               ("Wedding guest beauty prep", "blog/wedding-guest-beauty-prep"),
+               ("Pre-wedding beauty timeline", "blog/pre-wedding-beauty-timeline")],
 }
 
 # --------------------------------------------------------------------------
@@ -689,10 +694,16 @@ def load_content():
             raise SystemExit(f"{fn}: still contains a [CONFIRM] placeholder – resolve it before publishing")
         meta["body"] = m.group(2).strip()
         meta["cards"] = [c.strip() for c in meta.get("cards", "").split(",") if c.strip()]
+        meta["related"] = [c.strip() for c in meta.get("related", "").split(",") if c.strip()]
         for c in meta["cards"]:
             if c not in cards_by_id:
                 raise SystemExit(f"{fn}: unknown card id '{c}'")
         pages.append(meta)
+    slugs = {p["slug"] for p in pages}
+    for p in pages:
+        for r in p["related"]:
+            if r not in slugs or r == p["slug"]:
+                raise SystemExit(f"{p['slug']}: bad related slug '{r}'")
     # articles in a stable, sensible order: oldest first, then by name
     return sorted(pages, key=lambda p: (p["type"] != "landing", p["published"], p["slug"]))
 
@@ -858,7 +869,9 @@ def render_content(p, all_content):
       </div>
     </section>
 '''
-    guides = [o for o in all_content if o["type"] == "article" and o is not p][:5]
+    by_slug = {o["slug"]: o for o in all_content}
+    rel = [by_slug[s] for s in p["related"]]
+    guides = (rel + [o for o in all_content if o["type"] == "article" and o is not p and o not in rel])[:5]
     guide_items = "\n".join(f'          <li><a href="/{o["slug"]}/">{E(o["h1"])}</a></li>' for o in guides)
     svc_items = "\n".join(f'          <li><a href="/{s["slug"]}/">{E(s["h1"].replace(" in Indore", ""))}</a></li>' for s in PAGES)
     wa = WA_BASE + urllib.parse.quote(p["wa_text"])
@@ -1016,7 +1029,7 @@ if __name__ == "__main__":
         write_page(rel, render_content(p, content), changed)
         entries.append((SITE + p["slug"] + "/", rel))
         print("built", p["slug"] + "/")
-    articles = [p for p in content if p["type"] == "article"]
+    articles = sorted((p for p in content if p["type"] == "article"), key=lambda p: p["published"], reverse=True)  # newest first
     if articles:
         write_page("blog/index.html", render_blog_index(articles), changed)
         entries.append((SITE + "blog/", "blog/index.html"))
