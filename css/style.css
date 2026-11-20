@@ -456,6 +456,12 @@ body.has-selection .toast { bottom: 96px; }
 }
 .btn-ig:hover { filter: brightness(1.08); }
 .footer-h-follow { margin-top: 18px; }
+.map-icon { width: 18px; height: 18px; flex: none; }
+.btn-map {
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 8px; color: #fff;
+  font-weight: 600; font-size: 14px; text-decoration: none; margin-top: 10px; background: #1a73e8;
+}
+.btn-map:hover { filter: brightness(1.1); }
 .nav-ig a { display: inline-flex; align-items: center; gap: 6px; }
 .nav-ig .nav-ig-text { display: none; }
 @media (max-width: 860px) { .nav-ig .nav-ig-text { display: inline; } }
