@@ -447,21 +447,23 @@ s { color: var(--muted); font-weight: 400; }
 .toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
 body.has-selection .toast { bottom: 96px; }
 
-/* ---------- Instagram ---------- */
+/* ---------- Footer: connect ---------- */
 .ig-icon { width: 18px; height: 18px; flex: none; }
-.btn-ig {
-  display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 8px; color: #fff;
-  font-weight: 600; font-size: 14px; text-decoration: none;
-  background: linear-gradient(45deg, #f09433, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888);
+.footer-h-follow { margin-top: 22px; }
+.footer-cta { width: 100%; justify-content: center; }
+.footer-connect { max-width: 220px; }
+.social-row { display: grid; grid-template-columns: repeat(4, minmax(0, 40px)); justify-content: space-between; column-gap: 6px; }
+.social-ico {
+  width: 100%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+  background: #fff; border: 1px solid #f2cfe0; color: var(--ico); text-decoration: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06); transition: background .2s, color .2s, border-color .2s, transform .2s;
 }
-.btn-ig:hover { filter: brightness(1.08); }
-.footer-h-follow { margin-top: 18px; }
-.map-icon { width: 18px; height: 18px; flex: none; }
-.btn-map {
-  display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 8px; color: #fff;
-  font-weight: 600; font-size: 14px; text-decoration: none; white-space: nowrap; background: #1a73e8;
-}
-.btn-map:hover { filter: brightness(1.1); }
+.social-ico svg { width: 18px; height: 18px; }
+.social-ico:hover, .social-ico:focus-visible { background: var(--ico); border-color: var(--ico); color: #fff; transform: translateY(-2px); }
+.social-ico.ig { --ico: #d6249f; }
+.social-ico.map { --ico: #ea4335; }
+.social-ico.wa { --ico: #25d366; }
+.social-ico.call { --ico: var(--pink); }
 .nav-ig a { display: inline-flex; align-items: center; gap: 6px; }
 .nav-ig .nav-ig-text { display: none; }
 @media (max-width: 860px) { .nav-ig .nav-ig-text { display: inline; } }
